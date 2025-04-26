@@ -6,6 +6,8 @@ import {
   Container,
   Typography,
   Box,
+  AppBar,
+  Toolbar,
   useTheme,
   useMediaQuery,
   Grid,
@@ -120,7 +122,7 @@ function HomePage() {
             variant={isMobile ? 'h5' : 'h4'}
             sx={{
               fontWeight: 'bold',
-              color: '#dde9f5',
+              color: '#0d1b2a',
               textAlign: 'center',
               px: 2,
             }}
