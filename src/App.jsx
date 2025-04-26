@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage';
 import LoadingSpinner from './components/LoadingSpinner';
 import { CssBaseline, Box, Typography, useTheme } from '@mui/material';
 import theme from './theme';
+import { Analytics } from "@vercel/analytics/react"
 
 
 function ProtectedRoute({ children }) {
@@ -23,6 +24,7 @@ function App() {
     <AuthProvider>
       <Router>
         <CssBaseline />
+        <Analytics />
         <Box
           sx={{
             minHeight: '100vh',
@@ -66,6 +68,7 @@ function App() {
         </Box>
       </Router>
     </AuthProvider>
+    
   );
 }
 
