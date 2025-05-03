@@ -71,7 +71,7 @@ function DebtSummaryCard({ jugadores, eventos, asistencias }) {
                       key={e.id}
                       align="center"
                       sx={{ whiteSpace: 'nowrap' }}
-                      title={`$${e.costo?.toFixed(2) || 0} - ${new Date(e.fecha).toLocaleDateString()}`}
+                      title={`$${e.costo.toFixed(2)} - ${e.fecha.toDate().toLocaleDateString()}`}
                     >
                       {e.nombre}
                     </TableCell>

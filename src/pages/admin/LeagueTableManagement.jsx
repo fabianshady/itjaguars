@@ -139,10 +139,16 @@ function LeagueTableManagement() {
   const confirmarCargaExcel = async () => {
     if (!excelPreview.length) return;
     try {
+      // Eliminar datos previos del mismo grupo en tablaGeneralPrevio
+      const prevDocs = await getDocs(query(tablaPrevioRef, where("grupo", "==", grupoSeleccionado)));
+      await Promise.all(prevDocs.docs.map(docRef => deleteDoc(doc(db, 'tablaGeneralPrevio', docRef.id))));
+
+      // Guardar snapshot de la tabla actual como previa
       const existing = await getDocs(query(tablaCollectionRef, where("grupo", "==", grupoSeleccionado)));
-      for (const docRef of existing.docs) {
-        await addDoc(tablaPrevioRef, { ...docRef.data(), idOriginal: docRef.id });
-      }
+      await Promise.all(existing.docs.map(docRef =>
+        addDoc(tablaPrevioRef, { ...docRef.data(), idOriginal: docRef.id })
+      ));
+
       await Promise.all(existing.docs.map(docRef => deleteDoc(doc(db, 'tablaGeneral', docRef.id))));
       await Promise.all(excelPreview.map(d => addDoc(tablaCollectionRef, d)));
       await fetchTabla();
