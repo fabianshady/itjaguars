@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography, Chip, Paper, Button } from '@mui/material';
+import { Box, Typography, Chip, Button } from '@mui/material';
 import { parseISO } from 'date-fns';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
@@ -21,7 +21,7 @@ const formatearHora = (hora24) => {
   return `${hora12}:${minutos} ${ampm}`;
 };
 
-function MatchesTabs({ partidos }) {
+function MatchesTabs({ partidos, fotoActual, setFotoActual, fotos }) {
   const [activeTab, setActiveTab] = useState('proximos');
 
   const hoy = new Date();
@@ -36,123 +36,117 @@ function MatchesTabs({ partidos }) {
   ];
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: { xs: 'column', md: 'row' },
-        gap: 4,
-        alignItems: 'flex-start',
-      }}
-    >
-      <Box
-        sx={{
-          width: { xs: '100%', md: 300 },
-          position: { md: 'sticky' },
-          top: { md: 24 },
-          flexShrink: 0,
-        }}
-      >
-        <Paper sx={{ p: 3, borderRadius: 3 }}>
-          <Typography variant="h5" gutterBottom color="primary" fontWeight="bold" sx={{ textAlign: 'center', mb: 2 }}>
-            Partidos
-          </Typography>
+    <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={4}>
+      {/* Parte izquierda: contenido */}
+      <Box flex={1}>
+        <Box sx={{ display: 'flex', gap: 2, mb: 3, flexDirection: { xs: 'row', md: 'column' } }}>
+          {tabs.map(tab => (
+            <Button
+              key={tab.id}
+              variant={activeTab === tab.id ? 'contained' : 'outlined'}
+              onClick={() => setActiveTab(tab.id)}
+              color="primary"
+              fullWidth
+            >
+              {tab.label}
+            </Button>
+          ))}
+        </Box>
 
-          <Box sx={{ display: 'flex', gap: 2, mb: 3, flexDirection: { xs: 'row', md: 'column' } }}>
-            {tabs.map(tab => (
-              <Button
-                key={tab.id}
-                variant={activeTab === tab.id ? 'contained' : 'outlined'}
-                onClick={() => setActiveTab(tab.id)}
-                color="primary"
-                fullWidth
-              >
-                {tab.label}
-              </Button>
-            ))}
-          </Box>
-
-          <Box>
-            {(activeTab === 'proximos' ? partidosProximos : partidosAnteriores).map(partido => (
-              <Box key={partido.id} sx={{ borderBottom: '1px solid #ddd', pb: 2, mb: 2 }}>
-                {/* Fecha */}
-                <Box display="flex" alignItems="center" gap={1} mb={0.5}>
-                  <CalendarTodayIcon fontSize="small" color="action" />
-                  <Typography variant="body2">{formatearFecha(partido.fecha)}</Typography>
-                </Box>
-
-                {/* Hora */}
-                <Box display="flex" alignItems="center" gap={1} mb={0.5}>
-                  <AccessTimeIcon fontSize="small" color="action" />
-                  <Typography variant="body2">{formatearHora(partido.hora)}</Typography>
-                </Box>
-
-                {/* Lugar */}
-                <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  📍 {partido.lugar}
-                </Typography>
-
-                {/* Rival */}
-                {partido.rival && (
-                  <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    🆚 {partido.rival}
-                  </Typography>
-                )}
-
-                {/* Convocados o Marcador */}
-                {activeTab === 'proximos' ? (
-                  partido.convocados?.length > 0 && (
-                    <Box mt={1} display="flex" flexWrap="wrap" gap={1}>
-                      {partido.convocados.map((nombre, idx) => (
-                        <Chip
-                          key={idx}
-                          label={nombre}
-                          color='success'
-                        />
-                      ))}
-                    </Box>
-                  )
-                ) : (
-                  partido.marcador && (
-                    <Box mt={1} display="flex" flexDirection="column" gap={1}>
-                      <Typography variant="body2">
-                        <strong>Marcador:</strong> {partido.marcador}
-                      </Typography>
-
-                      {/* Badge de Resultado */}
-                      {(() => {
-                        const [golesFavor, golesContra] = partido.marcador.split('-').map(num => parseInt(num.trim(), 10));
-                        if (isNaN(golesFavor) || isNaN(golesContra)) return null; // seguridad
-
-                        let label = '';
-                        let color = 'default';
-
-                        if (golesFavor > golesContra) {
-                          label = 'Victoria';
-                          color = 'success';
-                        } else if (golesFavor < golesContra) {
-                          label = 'Derrota';
-                          color = 'error';
-                        } else {
-                          label = 'Empate';
-                          color = 'warning';
-                        }
-
-                        return (
-                          <Chip
-                            label={label}
-                            color={color}
-                            sx={{ fontWeight: 'bold' }}
-                          />
-                        );
-                      })()}
-                    </Box>
-                  )
-                )}
-
+        <Box>
+          {(activeTab === 'proximos' ? partidosProximos : partidosAnteriores).map(partido => (
+            <Box key={partido.id} sx={{ borderBottom: '1px solid #ddd', pb: 2, mb: 2 }}>
+              {/* Fecha */}
+              <Box display="flex" alignItems="center" gap={1} mb={0.5}>
+                <CalendarTodayIcon fontSize="small" color="action" />
+                <Typography variant="body2">{formatearFecha(partido.fecha)}</Typography>
               </Box>
-            ))}
-          </Box>
-        </Paper>
+
+              {/* Hora */}
+              <Box display="flex" alignItems="center" gap={1} mb={0.5}>
+                <AccessTimeIcon fontSize="small" color="action" />
+                <Typography variant="body2">{formatearHora(partido.hora)}</Typography>
+              </Box>
+
+              {/* Lugar */}
+              <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                📍 {partido.lugar}
+              </Typography>
+
+              {/* Rival */}
+              {partido.rival && (
+                <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  🆚 {partido.rival}
+                </Typography>
+              )}
+
+              {/* Convocados o Marcador */}
+              {activeTab === 'proximos' ? (
+                partido.convocados?.length > 0 && (
+                  <Box mt={1} display="flex" flexWrap="wrap" gap={1}>
+                    {partido.convocados.map((nombre, idx) => (
+                      <Chip
+                        key={idx}
+                        label={nombre}
+                        color='success'
+                      />
+                    ))}
+                  </Box>
+                )
+              ) : (
+                partido.marcador && (
+                  <Box mt={1} display="flex" flexDirection="column" gap={1}>
+                    <Typography variant="body2">
+                      <strong>Marcador:</strong> {partido.marcador}
+                    </Typography>
+
+                    {/* Badge de Resultado */}
+                    {(() => {
+                      const [golesFavor, golesContra] = partido.marcador.split('-').map(num => parseInt(num.trim(), 10));
+                      if (isNaN(golesFavor) || isNaN(golesContra)) return null;
+
+                      let label = '';
+                      let color = 'default';
+
+                      if (golesFavor > golesContra) {
+                        label = 'Victoria';
+                        color = 'success';
+                      } else if (golesFavor < golesContra) {
+                        label = 'Derrota';
+                        color = 'error';
+                      } else {
+                        label = 'Empate';
+                        color = 'warning';
+                      }
+
+                      return (
+                        <Chip
+                          label={label}
+                          color={color}
+                          sx={{ fontWeight: 'bold' }}
+                        />
+                      );
+                    })()}
+                  </Box>
+                )
+              )}
+            </Box>
+          ))}
+        </Box>
+      </Box>
+
+      {/* Parte derecha: imagen */}
+      <Box width={{ xs: '100%', md: 300 }} display="flex" flexDirection="column" alignItems="center">
+        <img
+          src={fotos[fotoActual]}
+          alt={`Foto ${fotoActual + 1}`}
+          style={{ width: '100%', height: 400, objectFit: 'cover', borderRadius: '16px', transition: '0.3s ease-in-out' }}
+        />
+        <Box display="flex" gap={1} mt={1}>
+          <Button onClick={() => setFotoActual(f => (f - 1 + fotos.length) % fotos.length)}>←</Button>
+          <Typography variant="body2">{fotoActual + 1} / {fotos.length}</Typography>
+          <Button onClick={() => setFotoActual(f => (f + 1) % fotos.length)}>→</Button>
+        </Box>
       </Box>
     </Box>
   );
