@@ -38,7 +38,7 @@ function HomePage() {
       setLoading(true);
       setError(null);
       try {
-        const partidosQuery = query(collection(db, 'partidos'), orderBy('fecha', 'asc'), limit(5));
+        const partidosQuery = query(collection(db, 'partidos'), orderBy('fecha', 'desc'), limit(4));
         const tablaQuery = query(collection(db, 'tablaGeneral'), orderBy('puntos', 'desc'));
         const goleoQuery = query(collection(db, 'goleo'), orderBy('goles', 'desc'));
         const jugadoresQuery = query(collection(db, 'jugadores'), where('activo', '!=', false), orderBy('nombre', 'asc'));

@@ -154,11 +154,6 @@ function StandingsTabs() {
     previousPositions[team.equipo] = i;
   });
 
-  console.log('Previo:', previousData[activeTab].map(e => e.equipo));
-  console.log('Actual:', data[activeTab].map(e => e.equipo));
-
-
-
   return (
     <Paper sx={{ p: 3, mb: 4, borderRadius: 3 }}>
       <Typography variant="h5" color="primary" gutterBottom fontWeight="bold" sx={{ textAlign: 'center', mb: 2 }}>
