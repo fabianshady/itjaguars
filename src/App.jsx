@@ -53,22 +53,33 @@ function App() {
             component="footer"
             sx={{
               textAlign: 'center',
-              bgcolor: theme.palette.primary.main,
+              background: 'linear-gradient(to right, #1e3c72, #2a5298)', // Azul deportivo elegante
               color: '#ffffff',
-              py: 2,
-              fontWeight: 'medium',
-              fontSize: '0.9rem',
-              borderTop: `3px solid ${theme.palette.secondary.main}`,
+              py: 3,
+              px: 2,
+              borderTop: `4px solid ${theme.palette.secondary.main}`,
+              mt: 'auto',
             }}
           >
-            <Typography variant="body2">
-              ITJ FC — {new Date().getFullYear()}
-            </Typography>
+            <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
+              <Box component="img" src="/logo.png" alt="Logo ITJ" sx={{ height: 40 }} />
+
+              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                © {new Date().getFullYear()} ITJAGUARS FC — Todos los derechos reservados
+              </Typography>
+
+              {/* Enlaces opcionales o redes sociales */}
+              {/* <Box display="flex" gap={2} mt={1}>
+      <Link href="#" underline="hover" color="inherit">Instagram</Link>
+      <Link href="#" underline="hover" color="inherit">Contacto</Link>
+    </Box> */}
+            </Box>
           </Box>
+
         </Box>
       </Router>
     </AuthProvider>
-    
+
   );
 }
 

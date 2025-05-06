@@ -24,6 +24,9 @@ function MatchManagement() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [editandoConvocadosId, setEditandoConvocadosId] = useState(null);
+  const [convocadosEditTemp, setConvocadosEditTemp] = useState([]);
+
 
   const partidosCollectionRef = collection(db, 'partidos');
   const jugadoresCollectionRef = collection(db, 'jugadores');
@@ -119,6 +122,21 @@ function MatchManagement() {
     );
   };
 
+  const handleUpdateConvocados = async (id, nuevosConvocados) => {
+    try {
+      const ref = doc(db, 'partidos', id);
+      await updateDoc(ref, { convocados: nuevosConvocados });
+      setPartidos(partidos.map(p =>
+        p.id === id ? { ...p, convocados: nuevosConvocados } : p
+      ));
+      setEditandoConvocadosId(null);
+    } catch (err) {
+      console.error("Error actualizando convocados:", err);
+      alert("No se pudo actualizar la lista de convocados.");
+    }
+  };
+
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <div className="space-y-6">
@@ -186,10 +204,60 @@ function MatchManagement() {
                     <TableCell>{partido.lugar}</TableCell>
                     <TableCell>{partido.rival}</TableCell>
                     <TableCell>
-                      <Typography variant="caption">
-                        {partido.convocados?.join(', ')}
-                      </Typography>
+                      {editandoConvocadosId === partido.id ? (
+                        <>
+                          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 1 }}>
+                            {jugadores.map(j => (
+                              <Chip
+                                key={j.id}
+                                label={j.nombre}
+                                clickable
+                                color={convocadosEditTemp.includes(j.nombre) ? 'primary' : 'default'}
+                                onClick={() =>
+                                  setConvocadosEditTemp(prev =>
+                                    prev.includes(j.nombre)
+                                      ? prev.filter(n => n !== j.nombre)
+                                      : [...prev, j.nombre]
+                                  )
+                                }
+                              />
+                            ))}
+                          </Box>
+                          <Button
+                            onClick={() => handleUpdateConvocados(partido.id, convocadosEditTemp)}
+                            size="small"
+                            variant="contained"
+                          >
+                            Guardar
+                          </Button>
+                          <Button
+                            onClick={() => setEditandoConvocadosId(null)}
+                            size="small"
+                            variant="text"
+                            sx={{ ml: 1 }}
+                          >
+                            Cancelar
+                          </Button>
+                        </>
+                      ) : (
+                        <Box>
+                          <Typography variant="caption">
+                            {partido.convocados?.join(', ')}
+                          </Typography>
+                          <Button
+                            onClick={() => {
+                              setEditandoConvocadosId(partido.id);
+                              setConvocadosEditTemp(partido.convocados || []);
+                            }}
+                            size="small"
+                            variant="text"
+                          >
+                            Editar
+                          </Button>
+                        </Box>
+                      )}
                     </TableCell>
+
                     <TableCell>
                       {partido.marcador
                         ? <span>{partido.marcador}</span>
