@@ -33,7 +33,7 @@ const abreviacionesEquipos = {
   "REAL TIJUANA (M)": "R. TIJUANA",
   "ATLAS (Ma)": "ATLAS",
   "MAXLR FC": "MAXLR",
-  "INTER CALIFORNIA FC": "INTER CALI",
+  "INTER CALIFORNIA  FC": "INTER CALI",
   "EQUIPAMIENTO HPC": "HPC",
   "MILAN": "MILAN",
   "MALBORO FC": "MALBORO",
@@ -104,10 +104,20 @@ function StandingsTabs() {
 
   const fetchData = async (grupo, isPrevious = false) => {
     const colName = isPrevious ? 'tablaGeneralPrevio' : 'tablaGeneral';
-    const q = query(collection(db, colName), where('grupo', '==', grupo), orderBy('puntos', 'desc'));
+    const q = query(collection(db, colName), where('grupo', '==', grupo));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const rawData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    // Ordenar por puntos, luego por diferencia de goles, luego por goles a favor
+    rawData.sort((a, b) => {
+      if (b.puntos !== a.puntos) return b.puntos - a.puntos;
+      if (b.dif !== a.dif) return b.dif - a.dif;
+      return b.gf - a.gf;
+    });
+
+    return rawData;
   };
+
 
   useEffect(() => {
     const fetchBoth = async () => {
@@ -128,17 +138,21 @@ function StandingsTabs() {
     { id: 'ITJ FC', label: 'ITJ FC (Wednesday)' },
   ];
 
-  const getPositionDelta = (equipo) => {
-    const prev = previousData[activeTab];
-    const current = data[activeTab];
-    const prevIndex = prev.findIndex(e => e.equipo === equipo);
-    const currIndex = current.findIndex(e => e.equipo === equipo);
-    if (prevIndex === -1) return null; // No había registro previo
-    const delta = prevIndex - currIndex;
+  const getPositionDelta = (equipo, currentIndex) => {
+    const prevIndex = previousPositions[equipo];
+    if (prevIndex === undefined) return null;
+    const delta = prevIndex - currentIndex;
     if (delta > 0) return <ArrowDropUp fontSize="small" color="success" />;
     if (delta < 0) return <ArrowDropDown fontSize="small" color="error" />;
     return <Remove fontSize="small" color="disabled" />;
   };
+
+
+  // Asegúrate que ambas listas estén ordenadas antes de generar esto
+  const previousPositions = {};
+  previousData[activeTab].forEach((team, i) => {
+    previousPositions[team.equipo] = i;
+  });
 
   return (
     <Paper elevation={3} sx={{ background: 'linear-gradient(to bottom right, #d1f4fa, #e6f1ff)', p: 4, borderRadius: 4, mb: 6, maxWidth: 1000, mx: 'auto' }}>
@@ -198,7 +212,7 @@ function StandingsTabs() {
               <TableRow key={t.id}>
                 <TableCell sx={{ borderLeft: `8px solid ${getLeftBorderColor(index)}` }}>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    {getPositionDelta(t.equipo)}
+                    {getPositionDelta(t.equipo, index)}
                     <Typography ml={0.5}>{index + 1}</Typography>
                   </Box>
                 </TableCell>

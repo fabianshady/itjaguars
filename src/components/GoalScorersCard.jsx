@@ -71,8 +71,7 @@ function GoalScorersCard() {
                 <TableRow key={jugador.id}>
                   {/* Ranking + flecha */}
                   <TableCell>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>  
                       {getPositionDelta(jugador)}
                       <Typography ml={0.5}>{index + 1}</Typography>
                     </Box>
