@@ -33,6 +33,9 @@ function DebtSummaryCard({ jugadores, eventos, asistencias }) {
 
   return (
     <Paper elevation={3} sx={{ background: 'linear-gradient(to bottom right, #c2e9fb, #a1c4fd)', p: 4, borderRadius: 4, mb: 6, maxWidth: 1500, mx: 'auto' }}>
+      <Typography variant="h5" color="primary" gutterBottom fontWeight="bold" sx={{ textAlign: 'center', mb: 2 }}>
+        Accounting
+      </Typography>
       <Box
         sx={{
           overflowX: 'auto',
@@ -52,9 +55,6 @@ function DebtSummaryCard({ jugadores, eventos, asistencias }) {
           },
         }}
       >
-        <Typography variant="h5" color="primary" gutterBottom fontWeight="bold" sx={{ textAlign: 'center', mb: 2 }}>
-          Accounting
-        </Typography>
         <Table size="small">
           <TableHead>
             <TableRow>
