@@ -134,8 +134,8 @@ function StandingsTabs() {
   }, []);
 
   const tabs = [
-    { id: 'ITJaguars', label: 'ITJaguars (Martes)' },
-    { id: 'ITJ FC', label: 'ITJ FC (Miércoles)' },
+    { id: 'ITJaguars', label: 'ITJaguars (Tuesday)' },
+    { id: 'ITJ FC', label: 'ITJ FC (Wednesday)' },
   ];
 
   const getPositionDelta = (equipo, currentIndex) => {
@@ -155,9 +155,9 @@ function StandingsTabs() {
   });
 
   return (
-    <Paper sx={{ p: 3, mb: 4, borderRadius: 3 }}>
+    <Paper elevation={3} sx={{ background: 'linear-gradient(to bottom right, #d1f4fa, #e6f1ff)', p: 4, borderRadius: 4, mb: 6, maxWidth: 1000, mx: 'auto' }}>
       <Typography variant="h5" color="primary" gutterBottom fontWeight="bold" sx={{ textAlign: 'center', mb: 2 }}>
-        Tabla General
+        Table
       </Typography>
 
       <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mb: 2 }}>
@@ -174,7 +174,7 @@ function StandingsTabs() {
       </Box>
       <Box
         sx={{
-          width: { xs: '100%', md: 700 },
+          width: { xs: '100%', md: 1000 },
           overflowX: 'auto',
           maxWidth: '100%',
           scrollbarWidth: 'thin', /* Firefox */
@@ -196,21 +196,21 @@ function StandingsTabs() {
           <TableHead>
             <TableRow>
               <TableCell>#</TableCell>
-              <TableCell>Equipo</TableCell>
-              <TableCell>JJ</TableCell>
-              <TableCell>JG</TableCell>
-              <TableCell>JE</TableCell>
-              <TableCell>JP</TableCell>
+              <TableCell>Team</TableCell>
+              <TableCell>MP</TableCell>
+              <TableCell>W</TableCell>
+              <TableCell>D</TableCell>
+              <TableCell>L</TableCell>
               <TableCell>GF</TableCell>
-              <TableCell>GC</TableCell>
-              <TableCell>DIF</TableCell>
+              <TableCell>GA</TableCell>
+              <TableCell>GD</TableCell>
               <TableCell>PTS</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {data[activeTab].map((t, index) => (
               <TableRow key={t.id}>
-                <TableCell sx={{ borderLeft: `8px solid ${getLeftBorderColor(index)}`, backgroundColor: '#fff' }}>
+                <TableCell sx={{ borderLeft: `8px solid ${getLeftBorderColor(index)}` }}>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     {getPositionDelta(t.equipo, index)}
                     <Typography ml={0.5}>{index + 1}</Typography>

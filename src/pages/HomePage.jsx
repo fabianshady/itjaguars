@@ -1,26 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { db } from '../firebase/config';
-import { collection, getDocs, query, orderBy, limit, where } from 'firebase/firestore';
-import {
-  CircularProgress,
-  Container,
-  Typography,
-  Box,
-  AppBar,
-  Toolbar,
-  useTheme,
-  useMediaQuery,
-  Grid,
-  Fade,
-} from '@mui/material';
-import MatchesTabs from '../components/MatchesTabs';
+import React, { useState, useEffect, useRef } from 'react';
+import { Box, Typography, Button, Tabs, Tab, Paper, CircularProgress, Fade } from '@mui/material';
 import StandingsTabs from '../components/StandingsTabs';
 import GoalScorersCard from '../components/GoalScorersCard';
 import DebtSummaryCard from '../components/DebtSummaryCard';
-import PhotosSection from '../components/PhotosSection';
-import PhotosSection2 from '../components/PhotosSection2';
+import MatchesTabs from '../components/MatchesTabs';
+import { db } from '../firebase/config';
+import { collection, getDocs, query, orderBy, limit, where } from 'firebase/firestore';
+
+const secciones = ['Table', 'Stats / Goals', 'Accounting'];
+const fotos = [
+  'team.png',
+  '/14.jpg',
+  '/foto1.JPG',
+  '/foto2.jpg',
+  '/13.jpg',
+  '/IMG_1838.JPG',
+  '/d.jpg',
+  '/11.jpg',
+  '/12.jpg',
+];
 
 function HomePage() {
+  const [tabSeleccionado, setTabSeleccionado] = useState(0);
+  const [fotoActual, setFotoActual] = useState(0);
+
   const [partidos, setPartidos] = useState([]);
   const [tablaGeneral, setTablaGeneral] = useState([]);
   const [goleo, setGoleo] = useState([]);
@@ -30,15 +33,17 @@ function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const tablaRef = useRef(null);
+  const statsRef = useRef(null);
+  const accountingRef = useRef(null);
+
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const partidosQuery = query(collection(db, 'partidos'), orderBy('fecha', 'desc'), limit(4));
+        const partidosQuery = query(collection(db, 'partidos'), orderBy('fecha', 'asc'), limit(20));
         const tablaQuery = query(collection(db, 'tablaGeneral'), orderBy('puntos', 'desc'));
         const goleoQuery = query(collection(db, 'goleo'), orderBy('goles', 'desc'));
         const jugadoresQuery = query(collection(db, 'jugadores'), where('activo', '!=', false), orderBy('nombre', 'asc'));
@@ -89,70 +94,100 @@ function HomePage() {
   if (error) return <Typography color="error" align="center" mt={4}>{error}</Typography>;
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        background: 'linear-gradient(to bottom right, #e3f2fd, #f0fdf4)',
-      }}
-    >
-
-      {/* Nuevo Banner Principal */}
-      <Fade in timeout={1000}>
+    <Box sx={{ p: { xs: 2, md: 4 }, minHeight: '100vh' }}>
+      {/* HEADER */}
+      <Box
+        sx={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 1000,
+          backgroundColor: '#f5f7fa',
+          pb: 2,
+          pt: 2,
+        }}
+      >
         <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            py: { xs: 4, md: 6 },
-            background: 'linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #ffffff 100%)', // Azul marino a blanco suave
-          }}
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          flexWrap="wrap"
+          gap={2}
+          sx={{ px: { xs: 2, md: 4 } }}
         >
-          <Box
-            component="img"
-            src="/logo.png"
-            alt="ITJaguars FC Logo"
-            sx={{
-              width: { xs: 160, md: 240 },
-              height: 'auto',
-              mb: 2,
-              filter: 'drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.3))', // Sombra para resaltar el logo
+          <Box display="flex" alignItems="center" gap={2}>
+            <img src="/logo.png" alt="Logo ITJ" style={{ height: 70 }} />
+            <Typography variant="h5" fontWeight="bold">ITJAGUARS FC</Typography>
+          </Box>
+
+          <Tabs
+            value={tabSeleccionado}
+            onChange={(_, val) => {
+              setTabSeleccionado(val);
+
+              // Scroll después de un corto delay (más que 50ms para dejar que Fade acabe)
+              setTimeout(() => {
+                const refs = [tablaRef, statsRef, accountingRef];
+                const target = refs[val];
+                if (target?.current) {
+                  target.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }, 300); // este tiempo debe empatar con tu Fade timeout
             }}
-          />
-          <Typography
-            variant={isMobile ? 'h5' : 'h4'}
-            sx={{
-              fontWeight: 'bold',
-              color: '#0d1b2a',
-              textAlign: 'center',
-              px: 2,
-            }}
+
+
+            textColor="primary"
+            indicatorColor="primary"
+            variant="scrollable"
           >
-            ITJaguars FC - Temporada 2025
-          </Typography>
+            {secciones.map((nombre, i) => (
+              <Tab key={i} label={nombre} />
+            ))}
+          </Tabs>
+        </Box>
+      </Box>
+
+
+      {/* TARJETA DE PARTIDOS EXPANDIDA */}
+      <Paper elevation={3} sx={{ background: 'linear-gradient(to bottom right, #fceabb, #f8b500)', p: 4, borderRadius: 4, mb: 6, maxWidth: 1600, mx: 'auto' }}>
+        <Box mt={3}>
+          <MatchesTabs partidos={partidos} fotoActual={fotoActual} setFotoActual={setFotoActual} fotos={fotos} jugadoresRegistrados={jugadores} />
+        </Box>
+      </Paper>
+
+      <Box>
+        <Box ref={tablaRef}>
+          {tabSeleccionado === 0 && (
+            <Fade in={true} timeout={400} key="tabla">
+              <Box>
+                <StandingsTabs />
+              </Box>
+            </Fade>
+          )}
         </Box>
 
-      </Fade>
+        <Box ref={statsRef}>
+          {tabSeleccionado === 1 && (
+            <Fade in={true} timeout={400} key="stats">
+              <Box>
+                <GoalScorersCard goleo={goleo} />
+              </Box>
+            </Fade>
+          )}
+        </Box>
+
+        <Box ref={accountingRef}>
+          {tabSeleccionado === 2 && (
+            <Fade in={true} timeout={400} key="accounting">
+              <Box>
+                <DebtSummaryCard jugadores={jugadores} eventos={eventos} asistencias={asistencias} />
+              </Box>
+            </Fade>
+          )}
+        </Box>
+      </Box>
 
 
-      {/* Contenido principal */}
-      <Container maxWidth="xl" sx={{ py: { xs: 4, md: 6 } }}>
-        <Grid container spacing={4} justifyContent="center">
-          <Grid item xs={12} md={4}>
-            <MatchesTabs partidos={partidos} />
-            <PhotosSection />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <StandingsTabs />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <GoalScorersCard goleo={goleo} />
-            <PhotosSection2 />
-          </Grid>
-          <Grid item xs={12}>
-            <DebtSummaryCard jugadores={jugadores} eventos={eventos} asistencias={asistencias} />
-          </Grid>
-        </Grid>
-      </Container>
+
     </Box>
   );
 }

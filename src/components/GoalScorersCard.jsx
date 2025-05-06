@@ -39,7 +39,7 @@ function GoalScorersCard() {
   };
 
   return (
-    <Paper sx={{ p: 3, mb: 4, borderRadius: 3 }}>
+    <Paper elevation={3} sx={{ background: 'linear-gradient(to bottom right, #ffe29f, #ffa99f)', p: 4, borderRadius: 4, mb: 6, maxWidth: 600, mx: 'auto' }}>
       <Typography
         variant="h5"
         color="primary"
@@ -47,7 +47,7 @@ function GoalScorersCard() {
         fontWeight="bold"
         sx={{ textAlign: 'center', mb: 2 }}
       >
-        Tabla de Goleo
+        Stats / Goals
       </Typography>
 
       {loading ? (
@@ -57,13 +57,13 @@ function GoalScorersCard() {
       ) : error ? (
         <Typography variant="body2" color="error">{error}</Typography>
       ) : jugadores.length > 0 ? (
-        <Box sx={{ width: { xs: '100%', md: 300 }, overflowX: 'auto' }}>
+        <Box sx={{ width: { xs: '100%', md: 600 }, overflowX: 'auto' }}>
           <Table size="small">
             <TableHead>
               <TableRow>
                 <TableCell>#</TableCell>
-                <TableCell>Jugador</TableCell>
-                <TableCell>Goles</TableCell>
+                <TableCell>Player</TableCell>
+                <TableCell>Goals</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
