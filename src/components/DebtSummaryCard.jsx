@@ -58,8 +58,22 @@ function DebtSummaryCard({ jugadores, eventos, asistencias }) {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>Player</TableCell>
-              <TableCell>Pending (MXN)</TableCell>
+              <TableCell
+                sx={{
+                  minWidth: 150,
+                  position: 'sticky',
+                  left: 0,
+                  zIndex: 1101,
+                  background: 'linear-gradient(to bottom right, #c2e9fb, #a1c4fd)',
+                }}>Player</TableCell>
+              <TableCell
+                sx={{
+                  minWidth: 100,
+                  position: 'sticky',
+                  left: 150, // Ajusta este valor al ancho de la primera columna
+                  zIndex: 1101,
+                  background: 'linear-gradient(to bottom right, #c2e9fb, #a1c4fd)',
+                }}>Pending (MXN)</TableCell>
               {eventos.map((e) => (
                 <TableCell
                   key={e.id}
@@ -75,8 +89,20 @@ function DebtSummaryCard({ jugadores, eventos, asistencias }) {
           <TableBody>
             {deudas.map((item) => (
               <TableRow key={item.id}>
-                <TableCell>{item.nombre}</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: item.deuda > 0 ? '#c62828' : '#2e7d32' }}>
+                <TableCell
+                  sx={{
+                    position: 'sticky',
+                    left: 0,
+                    zIndex: 1000, // Menor que el zIndex de la cabecera pero suficiente para estar por encima del contenido
+                    background: 'linear-gradient(to bottom right, #c2e9fb, #a1c4fd)', // O el color de fondo de tus celdas
+                  }}>{item.nombre}</TableCell>
+                <TableCell sx={{
+                  position: 'sticky',
+                  left: 150, // Debe coincidir con el 'left' de la cabecera de "Pending"
+                  zIndex: 1000,
+                  background: 'linear-gradient(to bottom right, #c2e9fb, #a1c4fd)',
+                  fontWeight: 600, color: item.deuda > 0 ? '#c62828' : '#2e7d32'
+                }}>
                   {item.deuda.toFixed(2)}
                 </TableCell>
                 {eventos.map((e) => {
