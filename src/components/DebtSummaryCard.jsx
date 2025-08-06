@@ -58,30 +58,19 @@ function DebtSummaryCard({ jugadores, eventos, asistencias }) {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell
-                sx={{
-                  minWidth: 150,
-                  position: 'sticky',
-                  left: 0,
-                  zIndex: 1101,
-                  background: 'linear-gradient(to bottom right, #c2e9fb, #a1c4fd)',
-                }}>Player</TableCell>
-              <TableCell
-                sx={{
-                  minWidth: 100,
-                  position: 'sticky',
-                  left: 150, // Ajusta este valor al ancho de la primera columna
-                  zIndex: 1101,
-                  background: 'linear-gradient(to bottom right, #c2e9fb, #a1c4fd)',
-                }}>Pending (MXN)</TableCell>
+              <TableCell>Player</TableCell>
+              <TableCell align="center">Pending</TableCell>
               {eventos.map((e) => (
                 <TableCell
                   key={e.id}
                   align="center"
                   sx={{ whiteSpace: 'nowrap' }}
-                  title={`$${e.costo.toFixed(2)} - ${e.fecha.toDate().toLocaleDateString()}`}
+                  title={`$${e.costo.toFixed(2)} - ${e.nombre}`}
                 >
-                  {e.nombre}
+                  {e.fecha.toDate().toLocaleDateString('es-MX', {
+                    month: '2-digit',
+                    day: '2-digit',
+                  })} <br /> {e.nombre}
                 </TableCell>
               ))}
             </TableRow>
@@ -89,20 +78,8 @@ function DebtSummaryCard({ jugadores, eventos, asistencias }) {
           <TableBody>
             {deudas.map((item) => (
               <TableRow key={item.id}>
-                <TableCell
-                  sx={{
-                    position: 'sticky',
-                    left: 0,
-                    zIndex: 1000, // Menor que el zIndex de la cabecera pero suficiente para estar por encima del contenido
-                    background: 'linear-gradient(to bottom right, #c2e9fb, #a1c4fd)', // O el color de fondo de tus celdas
-                  }}>{item.nombre}</TableCell>
-                <TableCell sx={{
-                  position: 'sticky',
-                  left: 150, // Debe coincidir con el 'left' de la cabecera de "Pending"
-                  zIndex: 1000,
-                  background: 'linear-gradient(to bottom right, #c2e9fb, #a1c4fd)',
-                  fontWeight: 600, color: item.deuda > 0 ? '#c62828' : '#2e7d32'
-                }}>
+                <TableCell>{item.nombre}</TableCell>
+                <TableCell align="center" sx={{ fontWeight: 600, color: item.deuda > 0 ? '#c62828' : '#2e7d32' }}>
                   {item.deuda.toFixed(2)}
                 </TableCell>
                 {eventos.map((e) => {
