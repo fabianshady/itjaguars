@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Box, Paper, Typography, Table, TableHead, TableRow, TableCell, TableBody,
   Accordion, AccordionSummary, AccordionDetails
@@ -12,6 +12,8 @@ const STATUS_DISPLAY = {
 };
 
 function DebtSummaryCard({ jugadores, eventos, asistencias }) {
+  const [selectedPlayer, setSelectedPlayer] = useState(null);
+  
   const deudas = useMemo(() => {
     const calculatedDeudas = {};
     if (!Array.isArray(jugadores)) return {};
@@ -77,7 +79,24 @@ function DebtSummaryCard({ jugadores, eventos, asistencias }) {
           </TableHead>
           <TableBody>
             {deudas.map((item) => (
-              <TableRow key={item.id}>
+              <TableRow 
+                key={item.id}
+                onClick={() => setSelectedPlayer(selectedPlayer === item.id ? null : item.id)}
+                sx={{
+                  cursor: 'pointer',
+                  backgroundColor: selectedPlayer === item.id ? '#e3f2fd' : 'transparent',
+                  transform: selectedPlayer === item.id ? 'scale(1.02)' : 'scale(1)',
+                  boxShadow: selectedPlayer === item.id ? '0 4px 8px rgba(0,0,0,0.2)' : 'none',
+                  transition: 'all 0.2s ease-in-out',
+                  '&:hover': {
+                    backgroundColor: selectedPlayer === item.id ? '#e3f2fd' : '#f5f5f5',
+                    transform: 'scale(1.01)',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                  },
+                  position: 'relative',
+                  zIndex: selectedPlayer === item.id ? 2 : 1,
+                }}
+              >
                 <TableCell>{item.nombre}</TableCell>
                 <TableCell align="center" sx={{ fontWeight: 600, color: item.deuda > 0 ? '#c62828' : '#2e7d32' }}>
                   {item.deuda.toFixed(2)}
